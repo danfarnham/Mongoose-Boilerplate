@@ -19,10 +19,30 @@ module.exports = function Route(app){
 	var Gnarwal = mongoose.model('Gnarwal', gnarwalSchema);
 
 	app.get('/', function(req, res){
-		
+		Gnarwal.find({}, function(errors, all_gnarwals){
+			console.log(all_gnarwals);
+			// render has to go in the callback to have access to the queried data
+			res.render('index', {title: 'Ballin with Gnarwhals', gnarwals: all_gnarwals})
+		})
 	})
 
 	app.post('/gnarwals/new', function(req, res){
-		
+		var new_gnarwal = new Gnarwal(req.body);
+		// must use callback
+		new_gnarwal.save(function(errors){
+			if(errors){
+				res.redirect('/');
+			}
+			else{
+				res.redirect('/');
+			}
+		})
+	})
+	app.get('/gnarwals/destroy/:id', function(req, res){
+		console.log('THIS GNARWAL NEEDS TO DIE PAINFULLY!', req.params.id);
+		Gnarwal.remove({_id: req.params.id}, function(errors){
+			console.log('OW')
+			res.redirect('/');
+		})
 	})
 }
